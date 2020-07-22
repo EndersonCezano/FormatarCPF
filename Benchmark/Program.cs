@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 
@@ -9,19 +10,18 @@ namespace Benchmark
         static void Main(string[] args)
         {
             BenchmarkRunner.Run<CpfBenchmark>();
-            
+                        
             /*
             var cpf = new CpfBenchmark();
             var result1 = cpf.FormatarInt();
             var result2 = cpf.FormatarSubstring();
             var result3 = cpf.FormatarInsert();
-            var result4 = cpf.FormatarLoop();            
+            var result4 = cpf.FormatarSpan();
+            var result5 = cpf.FormatarStringBuilder();            
             */
         }
     }
-
-    [MarkdownExporterAttribute.Default]
-    [MarkdownExporterAttribute.GitHub]
+    
     [MemoryDiagnoser]
     public class CpfBenchmark
     {
@@ -51,7 +51,7 @@ namespace Benchmark
         }
 
         [Benchmark]
-        public ReadOnlySpan<char> FormatarLoop()
+        public ReadOnlySpan<char> FormatarSpan()
         {
             Span<char> formattedValue = stackalloc char[14];
 
@@ -59,7 +59,7 @@ namespace Benchmark
             formattedValue[3] = '.';
 
             Copy(_cpf, startIndex: 3, length: 3, ref formattedValue, insertIndex: 4);
-            formattedValue[7] = '/';
+            formattedValue[7] = '.';
 
             Copy(_cpf, startIndex: 6, length: 3, ref formattedValue, insertIndex: 8);
             formattedValue[11] = '-';
@@ -73,6 +73,24 @@ namespace Benchmark
                 for (int i = startIndex, j = insertIndex; i < (startIndex + length); i++, j++)
                     destination[j] = origin[i];
             }
+        }
+
+        [Benchmark]
+        public string FormatarStringBuilder()
+        {
+            StringBuilder sb = new StringBuilder(14);
+
+            var span = _cpf.AsSpan();
+
+            sb.Append(span.Slice(0, 3));
+            sb.Append(".");
+            sb.Append(span.Slice(3, 3));
+            sb.Append(".");
+            sb.Append(span.Slice(6, 3));
+            sb.Append("-");
+            sb.Append(span.Slice(9, 2));
+            
+            return sb.ToString();
         }
     }
 }
