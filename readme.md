@@ -10,5 +10,6 @@ Intel Core i7-8565U CPU 1.80GHz (Whiskey Lake), 1 CPU, 8 logical and 4 physical 
 ```
 |            Versão    |     Média | Razão 
 |--------------------- |----------:| ------:
-|    FormatarCpfInt    | 252.66 ns | 1.00
 | FormatarCpfSubstring | 115.27 ns | 0.46
+|    FormatarCpfInt    | 252.66 ns | 1.00
+
